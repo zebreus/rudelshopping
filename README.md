@@ -1,2 +1,2 @@
 # diyhrt
-This is a Diyhrt link collection, hosted on cloudflare pages. Its currently live on https://diyhrt.pages.dev
+This is an onlineshop for Rudelblinken. Its currently live on https://katzenohren.essen.jetzt
