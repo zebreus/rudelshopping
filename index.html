@@ -1,90 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rudelshopping</title>
     <style>
-        @font-face {
-            font-family: krypton;
-            src: url(./fonts/MonaspaceKrypton-Regular.woff2);
-        }
+      @font-face {
+        font-family: krypton;
+        src: url(./fonts/MonaspaceKrypton-Regular.woff2);
+      }
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            color: #F7A8B8;
-            /* Pink color for text */
-            font-size: 18px;
-            font-family: krypton;
-            /* Adjust the font size as needed */
-        }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #333;
+        color: #f7a8b8;
+        /* Pink color for text */
+        font-size: 18px;
+        font-family: krypton;
+        /* Adjust the font size as needed */
+      }
 
-        .pride-flag {
-            display: flex;
-            height: 20px;
-        }
+      .pride-flag {
+        display: flex;
+        height: 20px;
+      }
 
-        .pride-flag div {
-            flex: 1;
-        }
+      .pride-flag div {
+        flex: 1;
+      }
 
-        .pride-flag .red {
-            background-color: #FF0000;
-        }
+      .pride-flag .red {
+        background-color: #ff0000;
+      }
 
-        .pride-flag .orange {
-            background-color: #FF8C00;
-        }
+      .pride-flag .orange {
+        background-color: #ff8c00;
+      }
 
-        .pride-flag .yellow {
-            background-color: #FFFF00;
-        }
+      .pride-flag .yellow {
+        background-color: #ffff00;
+      }
 
-        .pride-flag .green {
-            background-color: #008000;
-        }
+      .pride-flag .green {
+        background-color: #008000;
+      }
 
-        .pride-flag .blue {
-            background-color: #0000FF;
-        }
+      .pride-flag .blue {
+        background-color: #0000ff;
+      }
 
-        .pride-flag .purple {
-            background-color: #800080;
-        }
+      .pride-flag .purple {
+        background-color: #800080;
+      }
 
-        header {
-            background-color: #333;
-            color: #F7A8B8;
-            /* Pink color for header text */
-            padding: 1rem 0;
-            text-align: center;
-        }
+      header {
+        background-color: #333;
+        color: #f7a8b8;
+        /* Pink color for header text */
+        padding: 1rem 0;
+        text-align: center;
+      }
 
-        nav {
-            display: block;
-            background-color: #555;
-        }
+      nav {
+        display: block;
+        background-color: #555;
+      }
 
-        .container {
-            padding: 2rem;
-        }
+      .container {
+        padding: 2rem;
+      }
 
-        a {
-            color: #55CDFC;
-            /* Light blue color for links */
-        }
+      a {
+        color: #55cdfc;
+        /* Light blue color for links */
+      }
 
-        .stripe-cards {
-            display: flex;
-            justify-content: center;
-        }
+      #order-form {
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      fieldset {
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: column;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- <script>
         // Function to inject CSS into a shadow DOM
         function injectCssToShadow(shadowRoot, css) {
@@ -123,49 +130,207 @@
         observeStripeButton();
     </script> -->
     <div class="pride-flag">
-        <div class="red"></div>
-        <div class="orange"></div>
-        <div class="yellow"></div>
-        <div class="green"></div>
-        <div class="blue"></div>
-        <div class="purple"></div>
+      <div class="red"></div>
+      <div class="orange"></div>
+      <div class="yellow"></div>
+      <div class="green"></div>
+      <div class="blue"></div>
+      <div class="purple"></div>
     </div>
     <div class="trans-flag">
-        <div class="blue"></div>
-        <div class="pink"></div>
-        <div class="white"></div>
-        <div class="pink"></div>
-        <div class="blue"></div>
+      <div class="blue"></div>
+      <div class="pink"></div>
+      <div class="white"></div>
+      <div class="pink"></div>
+      <div class="blue"></div>
     </div>
     <header>
-        <h1>Rudelblinken Webshop</h1>
+      <h1>Rudelblinken Webshop</h1>
     </header>
 
     <div class="container">
-        <p>
-            Here you can preorder the brand new <a href="https://oshwlab.com/zebreus/rudelblinken">Rudelblinken
-                Delta</a>, the best RGB* Catears ever made!
-        </p>
-        <p>
-            We will be ordering the next batch around late february. Production costs are expected to be around 4€ per
-            board. 6€ for the full kit including 3d printed cat-ears and a randomly colored LED strip.
-        </p>
-        <div class="stripe-cards">
-            <script async src="https://js.stripe.com/v3/buy-button.js">
-            </script>
+      <p>
+        Here you can preorder the brand new
+        <a href="https://oshwlab.com/zebreus/rudelblinken"
+        >Rudelblinken Delta</a>, the best RGB* Catears ever made!
+      </p>
+      <p>
+        We will be ordering the next batch around late february. Production
+        costs are expected to be around 4€ per board. 6€ for the full kit
+        including 3d printed cat-ears and a randomly colored LED strip.
+      </p>
+      <form id="order-form" action="/submit-order" method="post">
+        <h2>Order Form</h2>
 
-            <stripe-buy-button buy-button-id="buy_btn_1QdLqvHJoEV9gwx1oyE76eZ3"
-                publishable-key="pk_live_51Qbi16HJoEV9gwx1u0N0R4Cf4qOKUVlFZwkVURlDqZsBfN7xAtaOWqsMlYKuoC3pi4pExJtdMLyIGPR75mC5HPbH00qYxTYcHO">
-            </stripe-buy-button>
+        <fieldset>
+          <legend>Products</legend>
 
-            <stripe-buy-button buy-button-id="buy_btn_1QdKnzHJoEV9gwx1Ew409Jm7"
-                publishable-key="pk_live_51Qbi16HJoEV9gwx1u0N0R4Cf4qOKUVlFZwkVURlDqZsBfN7xAtaOWqsMlYKuoC3pi4pExJtdMLyIGPR75mC5HPbH00qYxTYcHO">
-            </stripe-buy-button>
+          <fieldset>
+            <legend>PCB Only</legend>
+            <label>
+              Quantity <input
+                type="number"
+                id="pcb-quantity"
+                name="pcb_quantity"
+                min="0"
+                step="1"
+                max="999"
+                placeholder="0"
+              />
+            </label>
 
-        </div>
+            <label>Price<input
+                type="number"
+                id="pcb-price"
+                name="pcb_price"
+                min="4"
+                step="0.01"
+                placeholder="7"
+                value="7"
+              /> (Suggested Price: 7€, Minimum: 4€)</label>
+          </fieldset>
 
+          <fieldset>
+            <legend>Full kit</legend>
+            <label>
+              Quantity <input
+                type="number"
+                id="kit-quantity"
+                name="kit_quantity"
+                min="0"
+                step="1"
+                max="999"
+                placeholder="0"
+              />
+            </label>
+
+            <label>Price
+              <input
+                type="number"
+                id="kit-price"
+                name="kit_price"
+                min="4"
+                step="0.01"
+                placeholder="9"
+                value="9"
+              /> (Suggested Price: 9€, Minimum: 6€)</label>
+          </fieldset>
+        </fieldset>
+
+        <fieldset>
+          <legend>Delivery</legend>
+
+          <p>
+            We offer shipping and pickup at various events. Shipping is 4.20€
+            and pickup is free. Pickup is possible at W17 hackspace, Easterhegg
+            and GPN. If you want me to ship to you, please make sure to provide
+            a valid email address so I can send you a tracking link.
+          </p>
+
+          <label>
+            <input
+              type="radio"
+              name="delivery_method"
+              value="shipping"
+              checked
+              required
+            />
+            Shipping (4.20€)
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="delivery_method"
+              value="pickup_w17"
+              required
+            />
+            Pickup at W17 hackspace (0€)
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="delivery_method"
+              value="pickup_easterhegg"
+              required
+            />
+            Pickup at Easterhegg (0€)
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="delivery_method"
+              value="pickup_gpn"
+              required
+            />
+            Pickup at GPN (0€)
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Payment</legend>
+
+          <label>
+            <input
+              type="radio"
+              name="payment_method"
+              value="not_cash"
+              checked
+              required
+            />
+            Not cash
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="payment_method"
+              value="cash"
+              required
+            />
+            Cash (Only for pickup orders)
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Information</legend>
+
+          <label>
+            Your name
+            <input
+              type="text"
+              name="creature_name"
+              id="creature_name"
+              placeholder="xX_H4x0r_1337_Xx"
+              required
+            >
+          </label>
+
+          <label>
+            Your email address (I will send a tracking link when I shipped your
+            order)
+            <input
+              type="text"
+              name="email"
+              id="email"
+              placeholder="creature@example.com"
+              required
+            >
+          </label>
+
+          <label>
+            Notes
+            <textarea
+              name="notes"
+              id="notes"
+              placeholder="If you want to tell me anything else, write it here."
+            >
+            </textarea>
+          </label>
+        </fieldset>
+
+        <button type="submit">Preorder now</button>
+      </form>
     </div>
-
-</body>
-
+  </body>
 </html>
