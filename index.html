@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rudelshopping</title>
     <style>
+        @font-face {
+            font-family: krypton;
+            src: url(./fonts/MonaspaceKrypton-Regular.woff2);
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -13,6 +18,7 @@
             color: #F7A8B8;
             /* Pink color for text */
             font-size: 18px;
+            font-family: krypton;
             /* Adjust the font size as needed */
         }
 
@@ -95,17 +101,22 @@
 
     <div class="container">
         <p>
-            Here you can order the brand new Rudelblinken Delta, the best RGB* Catears ever made! <br>
-            <script async src="https://js.stripe.com/v3/buy-button.js">
-            </script>
-
+            Here you can preorder the brand new <a href="https://oshwlab.com/zebreus/rudelblinken">Rudelblinken
+                Delta</a>, the best RGB* Catears ever made!
+        </p>
+        <p>
+            We will be ordering the next batch around late february. Production costs are expected to be around 4€ per
+            board. 6€ for the full kit including 3d printed cat-ears and a randomly colored LED strip.
+        </p>
+        <div>
             <script async src="https://js.stripe.com/v3/buy-button.js">
             </script>
 
             <stripe-buy-button buy-button-id="buy_btn_1QbpyyHJoEV9gwx14RV6ov9a"
                 publishable-key="pk_live_51Qbi16HJoEV9gwx1u0N0R4Cf4qOKUVlFZwkVURlDqZsBfN7xAtaOWqsMlYKuoC3pi4pExJtdMLyIGPR75mC5HPbH00qYxTYcHO">
             </stripe-buy-button>
-        </p>
+        </div>
+
     </div>
 
 </body>
