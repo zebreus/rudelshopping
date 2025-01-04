@@ -76,10 +76,52 @@
             color: #55CDFC;
             /* Light blue color for links */
         }
+
+        .stripe-cards {
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 
 <body>
+    <!-- <script>
+        // Function to inject CSS into a shadow DOM
+        function injectCssToShadow(shadowRoot, css) {
+            const style = document.createElement('style');
+            style.textContent = css;
+            shadowRoot.appendChild(style);
+        }
+
+        // Function to observe changes in the DOM
+        function observeStripeButton() {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'STRIPE-BUY-BUTTON') {
+                            // Check if shadowRoot exists and inject CSS
+                            console.log("Found", node)
+                            if (node.shadowRoot) {
+                                injectCssToShadow(node.shadowRoot, `
+                            button {
+                                background-color: #4CAF50 !important; /* Example custom styling */
+                                color: white !important;
+                                font-size: 16px !important;
+                            }
+                        `);
+                            }
+                        }
+                    });
+                });
+            });
+
+            // Start observing the body for added Stripe buttons
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+
+        // Call the observer function
+        observeStripeButton();
+    </script> -->
     <div class="pride-flag">
         <div class="red"></div>
         <div class="orange"></div>
@@ -108,13 +150,18 @@
             We will be ordering the next batch around late february. Production costs are expected to be around 4€ per
             board. 6€ for the full kit including 3d printed cat-ears and a randomly colored LED strip.
         </p>
-        <div>
+        <div class="stripe-cards">
             <script async src="https://js.stripe.com/v3/buy-button.js">
             </script>
 
-            <stripe-buy-button buy-button-id="buy_btn_1QbpyyHJoEV9gwx14RV6ov9a"
+            <stripe-buy-button buy-button-id="buy_btn_1QdLqvHJoEV9gwx1oyE76eZ3"
                 publishable-key="pk_live_51Qbi16HJoEV9gwx1u0N0R4Cf4qOKUVlFZwkVURlDqZsBfN7xAtaOWqsMlYKuoC3pi4pExJtdMLyIGPR75mC5HPbH00qYxTYcHO">
             </stripe-buy-button>
+
+            <stripe-buy-button buy-button-id="buy_btn_1QdKnzHJoEV9gwx1Ew409Jm7"
+                publishable-key="pk_live_51Qbi16HJoEV9gwx1u0N0R4Cf4qOKUVlFZwkVURlDqZsBfN7xAtaOWqsMlYKuoC3pi4pExJtdMLyIGPR75mC5HPbH00qYxTYcHO">
+            </stripe-buy-button>
+
         </div>
 
     </div>
