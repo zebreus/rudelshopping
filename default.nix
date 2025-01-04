@@ -19,7 +19,8 @@ stdenv.mkDerivation {
 
     cat <<EOF > $out/bin/rudelshopping
     #!/usr/bin/env bash
-    ${lib.getExe deno} run --allow-net --allow-read --allow-write $src/main.ts
+    cd $src
+    ${lib.getExe deno} run --allow-net --allow-read="$src" main.ts
     EOF
 
     chmod a+rwx $out/bin/rudelshopping
