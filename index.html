@@ -83,52 +83,224 @@
       }
 
       fieldset {
-        margin-bottom: 1rem;
         display: flex;
         justify-content: flex-end;
         flex-direction: column;
+        gap: 0.2rem;
+        padding-block: 0.3rem 0.65rem;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="number"],
+      textarea,
+      select {
+        background-color: #333333;
+        border-style: solid;
+        border-color: #555555; /* Subtle border for differentiation */
+        color: #ffffff; /* White text to match the dark background */
+        border-radius: 0px; /* Rounded edges for modern look */
+        padding: 4px; /* Comfortable padding for readability */
+        font-family: "krypton", monospace; /* Match the site's font style */
+        font-size: 16px;
+        width: 60px;
+        border-width: 2px;
+      }
+
+      textarea {
+        width: 100%;
+      }
+
+      form > * {
+        margin-bottom: 1rem;
+      }
+
+      form p {
+        margin-block: 0.5rem;
+      }
+
+      input[type="number"] {
+        width: 60px;
+      }
+      input[type="text"],
+      input[type="email"] {
+        width: auto;
+      }
+
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      input[type="number"]:focus,
+      textarea:focus,
+      select:focus,
+      input[type="radio"]:focus {
+        border-style: groove;
+        border-width: 2px;
+        border-color: ButtonFace;
+        outline: none;
+      }
+
+      label:has(
+        input[type="number"], input[type="text"], input[type="email"]
+      ) {
+        display: flex;
+        align-items: center;
+
+        > input {
+          margin-inline-start: 0.5rem;
+        }
+      }
+
+      input[type="radio"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: var(--form-background);
+        margin: 0;
+
+        font: inherit;
+        color: currentColor;
+        width: 1.15em;
+        height: 1.15em;
+        border-style: solid;
+        border-width: 2px;
+        border-color: #555555;
+        transform: translateY(-0.075em);
+
+        display: inline-grid;
+        place-content: center;
+      }
+
+      input[type="radio"]::before {
+        content: "";
+        width: 0.65em;
+        height: 0.65em;
+        /* border-radius: 50%; */
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+      }
+      input[type="radio"]:checked::before {
+        transform: scale(1);
+      }
+
+      #shippingRadio::before {
+        background-color: red;
+      }
+      #w17Radio::before {
+        background-color: orange;
+      }
+      #easterheggRadio::before {
+        background-color: yellow;
+      }
+      #gpnRadio::before {
+        background-color: green;
+      }
+      #noCashRadio::before {
+        background-color: blue;
+      }
+      #cashRadio::before {
+        background-color: purple;
+      }
+
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+
+      form button {
+        position: relative;
+        background-color: ButtonFace; /* Bright button to stand out */
+        /* border: none; */ /* Remove default border */
+        color: #333333; /* Contrasting text color */
+        font-family: "krypton"; /* Match font */
+        font-size: 16px; /* Slightly larger font for buttons */
+        padding: 10px 20px; /* Comfortable padding */
+        /* border-radius: 5px; */ /* Rounded edges for modern look */
+        cursor: pointer; /* Pointer cursor for interactive elements */
+        transition:
+          background-color 0.5s,
+          box-shadow 0.5s; /* Smooth hover effect */
+        width: 100%;
+      }
+
+      @keyframes a {
+        to {
+          background-position: -200% 0;
+        }
+      }
+
+      button::after {
+        content: "Preorder now";
+        z-index: 6;
+        position: absolute;
+        inset: 0px;
+        font-family: "krypton";
+        font-size: 16px;
+        padding: 10px 20px;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 1) 0%,
+          rgba(255, 154, 0, 1) 10%,
+          rgba(208, 222, 33, 1) 20%,
+          rgba(79, 220, 74, 1) 30%,
+          rgba(63, 218, 216, 1) 40%,
+          rgba(47, 201, 226, 1) 50%,
+          rgba(28, 127, 238, 1) 60%,
+          rgba(95, 21, 242, 1) 70%,
+          rgba(186, 12, 248, 1) 80%,
+          rgba(251, 7, 217, 1) 90%,
+          rgba(255, 0, 0, 1) 100%
+        ) 0 0/200% 200%;
+        transition: opacity 1.0s; /* Smooth hover effect */
+        opacity: 0.01;
+      }
+
+      button:focus {
+        outline: none;
+      }
+
+      button::before {
+        content: " dd";
+        z-index: -2;
+        position: absolute;
+        inset: -4px;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 1) 0%,
+          rgba(255, 154, 0, 1) 10%,
+          rgba(208, 222, 33, 1) 20%,
+          rgba(79, 220, 74, 1) 30%,
+          rgba(63, 218, 216, 1) 40%,
+          rgba(47, 201, 226, 1) 50%,
+          rgba(28, 127, 238, 1) 60%,
+          rgba(95, 21, 242, 1) 70%,
+          rgba(186, 12, 248, 1) 80%,
+          rgba(251, 7, 217, 1) 90%,
+          rgba(255, 0, 0, 1) 100%
+        ) 0 0/200% 200%;
+        animation: a 12s linear infinite;
+        filter: blur(8px);
+        opacity: 0.01;
+        transition: opacity 0.3s; /* Smooth hover effect */
+        animation: none;
+      }
+
+      button:hover::after,
+      button:focus::after {
+        animation: a 15s linear infinite;
+        opacity: 0.8;
+      }
+
+      button:hover::before,
+      button:focus::before {
+        animation: a 12s linear infinite;
+        opacity: 1;
       }
     </style>
   </head>
 
   <body>
-    <!-- <script>
-        // Function to inject CSS into a shadow DOM
-        function injectCssToShadow(shadowRoot, css) {
-            const style = document.createElement('style');
-            style.textContent = css;
-            shadowRoot.appendChild(style);
-        }
-
-        // Function to observe changes in the DOM
-        function observeStripeButton() {
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'STRIPE-BUY-BUTTON') {
-                            // Check if shadowRoot exists and inject CSS
-                            console.log("Found", node)
-                            if (node.shadowRoot) {
-                                injectCssToShadow(node.shadowRoot, `
-                            button {
-                                background-color: #4CAF50 !important; /* Example custom styling */
-                                color: white !important;
-                                font-size: 16px !important;
-                            }
-                        `);
-                            }
-                        }
-                    });
-                });
-            });
-
-            // Start observing the body for added Stripe buttons
-            observer.observe(document.body, { childList: true, subtree: true });
-        }
-
-        // Call the observer function
-        observeStripeButton();
-    </script> -->
     <div class="pride-flag">
       <div class="red"></div>
       <div class="orange"></div>
@@ -169,11 +341,13 @@
 
         <fieldset>
           <legend>Products</legend>
-
           <fieldset>
             <legend>PCB Only</legend>
+            <p>
+              Only the assembled board, no 3d printed parts or LED strip.
+            </p>
             <label>
-              Quantity <input
+              Quantity: <input
                 type="number"
                 id="pcbOnlyQuantity"
                 name="pcbOnlyQuantity"
@@ -184,7 +358,7 @@
               />
             </label>
 
-            <label>Price<input
+            <label>Price: <input
                 type="number"
                 id="pcbOnlyPrice"
                 name="pcbOnlyPrice"
@@ -192,13 +366,18 @@
                 step="0.01"
                 placeholder="7"
                 value="7"
-              /> (Suggested Price: 7€, Minimum: 4€)</label>
+              />€</label>
           </fieldset>
 
           <fieldset>
             <legend>Full kit</legend>
+            <p>
+              The full kit including 3d printed cat-ears and a randomly colored
+              LED strip. If you want a specific color, please write it in the
+              notes.
+            </p>
             <label>
-              Quantity <input
+              Quantity: <input
                 type="number"
                 id="fullKitQuantity"
                 name="fullKitQuantity"
@@ -209,7 +388,7 @@
               />
             </label>
 
-            <label>Price
+            <label>Price:
               <input
                 type="number"
                 id="fullKitPrice"
@@ -218,7 +397,7 @@
                 step="0.01"
                 placeholder="9"
                 value="9"
-              /> (Suggested Price: 9€, Minimum: 6€)</label>
+              />€</label>
           </fieldset>
         </fieldset>
 
@@ -226,10 +405,7 @@
           <legend>Delivery</legend>
 
           <p>
-            We offer shipping and pickup at various events. Shipping is 4.20€
-            and pickup is free. Pickup is possible at W17 hackspace, Easterhegg
-            and GPN. If you want me to ship to you, please make sure to provide
-            a valid email address so I can send you a tracking link.
+            We offer shipping and pickup at various events.
           </p>
 
           <label>
@@ -252,7 +428,7 @@
               value="w17"
               required
             />
-            Pickup at W17 hackspace (0€)
+            Pickup in Darmstadt
           </label>
           <label>
             <input
@@ -262,7 +438,7 @@
               value="easterhegg"
               required
             />
-            Pickup at Easterhegg (0€)
+            Pickup at Easterhegg
           </label>
           <label>
             <input
@@ -272,7 +448,7 @@
               value="gpn"
               required
             />
-            Pickup at GPN (0€)
+            Pickup at GPN
           </label>
         </fieldset>
 
@@ -307,7 +483,7 @@
           <legend>Information</legend>
 
           <label>
-            Your name
+            Your name:
             <input
               type="text"
               name="name"
@@ -318,8 +494,7 @@
           </label>
 
           <label>
-            Your email address (I will send a tracking link when I shipped your
-            order)
+            Your email:
             <input
               type="email"
               name="email"
@@ -330,13 +505,12 @@
           </label>
 
           <label>
-            Notes
+            Notes:
             <textarea
               name="notes"
               id="notes"
               placeholder="If you want to tell me anything else, write it here."
-            >
-            </textarea>
+            ></textarea>
           </label>
         </fieldset>
 
