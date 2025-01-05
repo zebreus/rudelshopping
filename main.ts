@@ -110,7 +110,7 @@ const getCashCouponId = async () => {
   } catch (err) {
     console.error("Error retrieving cash coupon:", err);
   }
-  let newCoupon = await stripe.coupons.create({
+  const newCoupon = await stripe.coupons.create({
     id: "cash_on_pickup",
     percent_off: 100,
     duration: "forever",
@@ -213,6 +213,14 @@ const createCheckoutSession = async (order: Order): Promise<string> => {
         notes: order.notes,
         shipping: order.deliveryMethod,
         payment: order.paymentMethod,
+      },
+      payment_intent_data: {
+        metadata: {
+          name: order.name,
+          notes: order.notes,
+          shipping: order.deliveryMethod,
+          payment: order.paymentMethod,
+        },
       },
       billing_address_collection: "auto",
       custom_text: {
