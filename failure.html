@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rudelshopping</title>
+    <style>
+      @font-face {
+        font-family: krypton;
+        src: url(./fonts/MonaspaceKrypton-Regular.woff2);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #333;
+        color: #f7a8b8;
+        /* Pink color for text */
+        font-size: 18px;
+        font-family: krypton;
+        /* Adjust the font size as needed */
+      }
+
+      .pride-flag {
+        display: flex;
+        height: 20px;
+      }
+
+      .pride-flag div {
+        flex: 1;
+      }
+
+      .pride-flag .red {
+        background-color: #ff0000;
+      }
+
+      .pride-flag .orange {
+        background-color: #ff8c00;
+      }
+
+      .pride-flag .yellow {
+        background-color: #ffff00;
+      }
+
+      .pride-flag .green {
+        background-color: #008000;
+      }
+
+      .pride-flag .blue {
+        background-color: #0000ff;
+      }
+
+      .pride-flag .purple {
+        background-color: #800080;
+      }
+
+      header {
+        background-color: #333;
+        color: #f7a8b8;
+        /* Pink color for header text */
+        padding: 1rem 0;
+        text-align: center;
+      }
+
+      nav {
+        display: block;
+        background-color: #555;
+      }
+
+      .container {
+        padding: 2rem;
+      }
+
+      a {
+        color: #55cdfc;
+        /* Light blue color for links */
+      }
+
+      #order-form {
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      fieldset {
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: column;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="pride-flag">
+      <div class="red"></div>
+      <div class="orange"></div>
+      <div class="yellow"></div>
+      <div class="green"></div>
+      <div class="blue"></div>
+      <div class="purple"></div>
+    </div>
+    <header>
+      <h1>Something went wrong.</h1>
+    </header>
+
+    <div class="container">
+      <p>
+        Ok, maybe try again later. If the problem persists, please open an issue
+        on <a href="https://github.com/zebreus/rudelshopping/issues">GitHub</a>.
+      </p>
+      <a href="./index.html">Go back to the order form</a>
+    </div>
+  </body>
+</html>

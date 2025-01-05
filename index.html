@@ -159,6 +159,11 @@
         costs are expected to be around 4€ per board. 6€ for the full kit
         including 3d printed cat-ears and a randomly colored LED strip.
       </p>
+      <p>
+        To keep updated on the current status join the <a
+          href="https://matrix.to/#/#rudelblinken:zebre.us"
+        >Rudelblinken matrix room</a>
+      </p>
       <form id="order-form" action="/submit-order" method="post">
         <h2>Order Form</h2>
 
@@ -171,7 +176,7 @@
               Quantity <input
                 type="number"
                 id="pcb-quantity"
-                name="pcb_quantity"
+                name="pcbOnlyQuantity"
                 min="0"
                 step="1"
                 max="999"
@@ -182,7 +187,7 @@
             <label>Price<input
                 type="number"
                 id="pcb-price"
-                name="pcb_price"
+                name="pcbOnlyPrice"
                 min="4"
                 step="0.01"
                 placeholder="7"
@@ -196,7 +201,7 @@
               Quantity <input
                 type="number"
                 id="kit-quantity"
-                name="kit_quantity"
+                name="fullKitQuantity"
                 min="0"
                 step="1"
                 max="999"
@@ -208,7 +213,7 @@
               <input
                 type="number"
                 id="kit-price"
-                name="kit_price"
+                name="fullKitPrice"
                 min="4"
                 step="0.01"
                 placeholder="9"
@@ -230,7 +235,7 @@
           <label>
             <input
               type="radio"
-              name="delivery_method"
+              name="deliveryMethod"
               value="shipping"
               checked
               required
@@ -241,8 +246,8 @@
           <label>
             <input
               type="radio"
-              name="delivery_method"
-              value="pickup_w17"
+              name="deliveryMethod"
+              value="w17"
               required
             />
             Pickup at W17 hackspace (0€)
@@ -250,8 +255,8 @@
           <label>
             <input
               type="radio"
-              name="delivery_method"
-              value="pickup_easterhegg"
+              name="deliveryMethod"
+              value="easterhegg"
               required
             />
             Pickup at Easterhegg (0€)
@@ -259,8 +264,8 @@
           <label>
             <input
               type="radio"
-              name="delivery_method"
-              value="pickup_gpn"
+              name="deliveryMethod"
+              value="gpn"
               required
             />
             Pickup at GPN (0€)
@@ -273,18 +278,18 @@
           <label>
             <input
               type="radio"
-              name="payment_method"
-              value="not_cash"
+              name="paymentMethod"
+              value="stripe"
               checked
               required
             />
-            Not cash
+            Online Payment (Stripe)
           </label>
 
           <label>
             <input
               type="radio"
-              name="payment_method"
+              name="paymentMethod"
               value="cash"
               required
             />
@@ -299,7 +304,7 @@
             Your name
             <input
               type="text"
-              name="creature_name"
+              name="name"
               id="creature_name"
               placeholder="xX_H4x0r_1337_Xx"
               required
