@@ -34,14 +34,89 @@ type DeliveryMethod = z.infer<typeof deliveryMethodSchema>;
 type PaymentMethod = z.infer<typeof paymentMethodSchema>;
 type Order = z.infer<typeof orderSchema>;
 
-const getShippingRate = (deliveryMethod: DeliveryMethod): string => {
-  const rates = {
-    shipping: "shr_1QdgR9HJoEV9gwx1TrQdaQSr",
-    w17: "shr_1QdgPpHJoEV9gwx18JPS7ZIi",
-    gpn: "shr_1QdgSTHJoEV9gwx1viFmj8iT",
-    easterhegg: "shr_1QdgRlHJoEV9gwx1HarsYIZJ",
+const getShippingRate = (
+  deliveryMethod: DeliveryMethod
+): Stripe.Checkout.SessionCreateParams.ShippingOption => {
+  const rates: Record<
+    string,
+    Stripe.Checkout.SessionCreateParams.ShippingOption
+  > = {
+    shipping: {
+      shipping_rate_data: {
+        display_name: "Shipping by mail",
+        fixed_amount: {
+          amount: 420,
+          currency: "eur",
+        },
+        metadata: {},
+        tax_behavior: "exclusive",
+        tax_code: "txcd_00000000",
+        type: "fixed_amount",
+      },
+    },
+    w17: {
+      shipping_rate_data: {
+        display_name: "Pickup at CCC Darmstadt",
+        fixed_amount: {
+          amount: 0,
+          currency: "eur",
+        },
+        metadata: {},
+        tax_behavior: "exclusive",
+        tax_code: "txcd_00000000",
+        type: "fixed_amount",
+      },
+    },
+    gpn: {
+      shipping_rate_data: {
+        display_name: "Pickup at GPN",
+        fixed_amount: {
+          amount: 0,
+          currency: "eur",
+        },
+        metadata: {},
+        tax_behavior: "exclusive",
+        tax_code: "txcd_00000000",
+        type: "fixed_amount",
+      },
+    },
+    easterhegg: {
+      shipping_rate_data: {
+        display_name: "Pickup at Easterhegg",
+        fixed_amount: {
+          amount: 0,
+          currency: "eur",
+        },
+        metadata: {},
+        tax_behavior: "exclusive",
+        tax_code: "txcd_00000000",
+        type: "fixed_amount",
+      },
+    },
   };
   return rates[deliveryMethod];
+};
+
+const getCashCouponId = async () => {
+  try {
+    const existingCoupon = await stripe.coupons.retrieve("cash_on_pickup", {});
+    if (existingCoupon.id !== "cash_on_pickup") {
+      throw new Error("Coupon not found");
+    }
+    if (existingCoupon.percent_off !== 100) {
+      throw new Error("Coupon has the wrong discount");
+    }
+    return existingCoupon.id;
+  } catch (err) {
+    console.error("Error retrieving cash coupon:", err);
+  }
+  let newCoupon = await stripe.coupons.create({
+    id: "cash_on_pickup",
+    percent_off: 100,
+    duration: "forever",
+    name: "Cash Payment on Pickup",
+  });
+  return newCoupon.id;
 };
 
 const parseOrder = async (request: Request): Promise<Order> => {
@@ -123,9 +198,7 @@ const createCheckoutSession = async (order: Order): Promise<string> => {
   try {
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems,
-      shipping_options: [
-        { shipping_rate: getShippingRate(order.deliveryMethod) },
-      ],
+      shipping_options: [getShippingRate(order.deliveryMethod)],
       shipping_address_collection:
         order.deliveryMethod === "shipping"
           ? {
@@ -151,7 +224,7 @@ const createCheckoutSession = async (order: Order): Promise<string> => {
         order.paymentMethod == "cash"
           ? [
               {
-                coupon: "6czoBglP",
+                coupon: await getCashCouponId(),
               },
             ]
           : [],
