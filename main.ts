@@ -18,8 +18,8 @@ const deliveryMethodSchema = z.enum(["shipping", "w17", "gpn", "easterhegg"]);
 const paymentMethodSchema = z.enum(["cash", "stripe"]);
 const emailSchema = z.string().email();
 const orderSchema = z.object({
-  pcbOnlyQuantity: z.number().int().positive().default(1),
-  fullKitQuantity: z.number().int().positive().default(1),
+  pcbOnlyQuantity: z.number().int().default(0),
+  fullKitQuantity: z.number().int().default(0),
   pcbOnlyPrice: z.number().positive().default(7),
   fullKitPrice: z.number().positive().default(9),
   deliveryMethod: deliveryMethodSchema.default("shipping"),
@@ -78,7 +78,9 @@ const parseOrder = async (request: Request): Promise<Order> => {
   const order = orderSchema.parse(unparsedOrder);
 
   if (order.pcbOnlyQuantity === 0 && order.fullKitQuantity === 0) {
-    throw new Error("Cannot order 0 PCBs and 0 full kits");
+    throw new Error(
+      "You need to order at least one item. I mean it wouldn't be a preorder otherwise, right?"
+    );
   }
 
   if (order.paymentMethod === "cash" && order.deliveryMethod === "shipping") {

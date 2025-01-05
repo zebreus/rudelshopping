@@ -175,7 +175,7 @@
             <label>
               Quantity <input
                 type="number"
-                id="pcb-quantity"
+                id="pcbOnlyQuantity"
                 name="pcbOnlyQuantity"
                 min="0"
                 step="1"
@@ -186,7 +186,7 @@
 
             <label>Price<input
                 type="number"
-                id="pcb-price"
+                id="pcbOnlyPrice"
                 name="pcbOnlyPrice"
                 min="4"
                 step="0.01"
@@ -200,7 +200,7 @@
             <label>
               Quantity <input
                 type="number"
-                id="kit-quantity"
+                id="fullKitQuantity"
                 name="fullKitQuantity"
                 min="0"
                 step="1"
@@ -212,7 +212,7 @@
             <label>Price
               <input
                 type="number"
-                id="kit-price"
+                id="fullKitPrice"
                 name="fullKitPrice"
                 min="4"
                 step="0.01"
@@ -234,6 +234,7 @@
 
           <label>
             <input
+              id="shippingRadio"
               type="radio"
               name="deliveryMethod"
               value="shipping"
@@ -245,6 +246,7 @@
 
           <label>
             <input
+              id="w17Radio"
               type="radio"
               name="deliveryMethod"
               value="w17"
@@ -254,6 +256,7 @@
           </label>
           <label>
             <input
+              id="easterheggRadio"
               type="radio"
               name="deliveryMethod"
               value="easterhegg"
@@ -263,6 +266,7 @@
           </label>
           <label>
             <input
+              id="gpnRadio"
               type="radio"
               name="deliveryMethod"
               value="gpn"
@@ -277,17 +281,19 @@
 
           <label>
             <input
+              id="noCashRadio"
               type="radio"
               name="paymentMethod"
               value="stripe"
               checked
               required
             />
-            Online Payment (Stripe)
+            Online Payment
           </label>
 
           <label>
             <input
+              id="cashRadio"
               type="radio"
               name="paymentMethod"
               value="cash"
@@ -305,7 +311,7 @@
             <input
               type="text"
               name="name"
-              id="creature_name"
+              id="name"
               placeholder="xX_H4x0r_1337_Xx"
               required
             >
@@ -315,7 +321,7 @@
             Your email address (I will send a tracking link when I shipped your
             order)
             <input
-              type="text"
+              type="email"
               name="email"
               id="email"
               placeholder="creature@example.com"
@@ -336,6 +342,125 @@
 
         <button type="submit">Preorder now</button>
       </form>
+
+      <script>
+        // Form validation
+
+        const pcbOnlyQuantity = document.getElementById(
+          "pcbOnlyQuantity",
+        );
+        const pcbOnlyPrice = document.getElementById(
+          "pcbOnlyPrice",
+        );
+        const fullKitQuantity = document.getElementById(
+          "fullKitQuantity",
+        );
+        const fullKitPrice = document.getElementById(
+          "fullKitPrice",
+        );
+        const notes = document.getElementById("notes");
+        const email = document.getElementById("email");
+        const name = document.getElementById("name");
+        const cashRadio = document.getElementById("cashRadio");
+        const noCashRadio = document.getElementById("noCashRadio");
+        const shippingRadio = document.getElementById(
+          "shippingRadio",
+        );
+        const w17Radio = document.getElementById("w17Radio");
+        const easterheggRadio = document.getElementById(
+          "easterheggRadio",
+        );
+        const gpnRadio = document.getElementById("gpnRadio");
+
+        // Assert a valid email
+        email.addEventListener("input", (event) => {
+          if (email.validity.typeMismatch) {
+            email.setCustomValidity(
+              "I am expecting an email address!",
+            );
+          } else {
+            email.setCustomValidity("");
+          }
+        });
+
+        // Assert that more than 1 item is ordered
+        const checkQuantity = () => {
+          const pcbOnly = pcbOnlyQuantity.value || 0;
+          const fullKit = fullKitQuantity.value || 0;
+          const orderQuantity = parseInt(pcbOnly) + parseInt(fullKit);
+          if (orderQuantity <= 0) {
+            pcbOnlyQuantity.setCustomValidity(
+              "You need to order at least one item",
+            );
+            fullKitQuantity.setCustomValidity(
+              "You need to order at least one item",
+            );
+          } else {
+            pcbOnlyQuantity.setCustomValidity("");
+            fullKitQuantity.setCustomValidity("");
+          }
+        };
+        pcbOnlyQuantity.addEventListener("input", checkQuantity);
+        fullKitQuantity.addEventListener("input", checkQuantity);
+        checkQuantity();
+
+        // Assert that cash is only selected for pickup
+        const checkPaymentMethod = () => {
+          if (cashRadio.checked && shippingRadio.checked) {
+            cashRadio.setCustomValidity(
+              "You can only pay cash if you pick up your order",
+            );
+            shippingRadio.setCustomValidity(
+              "Shipping is only possible with online payment",
+            );
+          } else {
+            cashRadio.setCustomValidity("");
+            shippingRadio.setCustomValidity("");
+          }
+        };
+        cashRadio.addEventListener("input", checkPaymentMethod);
+        noCashRadio.addEventListener("input", checkPaymentMethod);
+        shippingRadio.addEventListener("input", checkPaymentMethod);
+        w17Radio.addEventListener("input", checkPaymentMethod);
+        easterheggRadio.addEventListener("input", checkPaymentMethod);
+        gpnRadio.addEventListener("input", checkPaymentMethod);
+        checkPaymentMethod();
+
+        const checkPcbOnlyPrice = (event) => {
+          const pcbOnlyQuant = pcbOnlyQuantity.value || 0;
+          if (
+            parseFloat(pcbOnlyPrice.value) < 4 && pcbOnlyQuant > 0
+          ) {
+            pcbOnlyPrice.setCustomValidity(
+              "Please enter a price that is higher than the production cost (4€). If that doesn't work for you, write me an email.",
+            );
+          } else {
+            pcbOnlyPrice.setCustomValidity("");
+          }
+        };
+        pcbOnlyPrice.addEventListener("input", checkPcbOnlyPrice);
+        checkPcbOnlyPrice();
+
+        const checkFullKitPrice = (event) => {
+          const fullKitQuant = fullKitQuantity.value || 0;
+          if (
+            parseFloat(fullKitPrice.value) < 6 && fullKitQuant > 0
+          ) {
+            fullKitPrice.setCustomValidity(
+              "Please enter a price that is higher than the production cost (4€). If that doesn't work for you, write me an email.",
+            );
+          } else {
+            fullKitPrice.setCustomValidity("");
+          }
+        };
+        fullKitPrice.addEventListener("input", checkFullKitPrice);
+        checkFullKitPrice();
+      </script>
+
+      <p>
+        RGB stands for Really Good Blinkenlights. We also offer them in a
+        variety of colors, but a single rudelblinken is just a single color.
+      </p>
     </div>
   </body>
 </html>
