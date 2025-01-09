@@ -37,21 +37,44 @@ type Order = z.infer<typeof orderSchema>;
 const getShippingRate = (
   deliveryMethod: DeliveryMethod
 ): Stripe.Checkout.SessionCreateParams.ShippingOption => {
+  // const oneDay = 24 * 60 * 60 * 1000;
+  // const daysUntilBatchA = Math.round(
+  //   Math.max(0, (new Date(2025, 3, 1).getTime() - Date.now()) / oneDay)
+  // );
+  // const daysUntilBatchB = Math.round(
+  //   Math.max(0, (new Date(2025, 12, 1).getTime() - Date.now()) / oneDay)
+  // );
+  // const daysUntilShipping =
+  //   daysUntilBatchA >= 5
+  //     ? daysUntilBatchA
+  //     : daysUntilBatchB >= 5
+  //     ? daysUntilBatchB
+  //     : 365;
+
   const rates: Record<
     string,
     Stripe.Checkout.SessionCreateParams.ShippingOption
   > = {
     shipping: {
       shipping_rate_data: {
-        display_name: "Shipping by mail",
+        display_name: "Shipping in March",
         fixed_amount: {
           amount: 420,
           currency: "eur",
         },
-        metadata: {},
         tax_behavior: "exclusive",
         tax_code: "txcd_00000000",
         type: "fixed_amount",
+        // delivery_estimate: {
+        //   minimum: {
+        //     unit: "day",
+        //     value: daysUntilShipping,
+        //   },
+        //   maximum: {
+        //     unit: "day",
+        //     value: daysUntilShipping + 10,
+        //   },
+        // },
       },
     },
     w17: {
@@ -61,7 +84,6 @@ const getShippingRate = (
           amount: 0,
           currency: "eur",
         },
-        metadata: {},
         tax_behavior: "exclusive",
         tax_code: "txcd_00000000",
         type: "fixed_amount",
@@ -74,7 +96,6 @@ const getShippingRate = (
           amount: 0,
           currency: "eur",
         },
-        metadata: {},
         tax_behavior: "exclusive",
         tax_code: "txcd_00000000",
         type: "fixed_amount",
@@ -87,7 +108,6 @@ const getShippingRate = (
           amount: 0,
           currency: "eur",
         },
-        metadata: {},
         tax_behavior: "exclusive",
         tax_code: "txcd_00000000",
         type: "fixed_amount",
@@ -225,7 +245,7 @@ const createCheckoutSession = async (order: Order): Promise<string> => {
       billing_address_collection: "auto",
       custom_text: {
         submit: {
-          message: "Preorder for the next batch",
+          message: `The invoice does not include VAT in accordance with §19 UStG.`,
         },
       },
       discounts:
