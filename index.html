@@ -59,6 +59,7 @@
         color: #f7a8b8;
         /* Pink color for header text */
         padding: 1rem 0;
+        padding-bottom: 0rem;
         text-align: center;
       }
 
@@ -68,7 +69,7 @@
       }
 
       .container {
-        padding: 2rem;
+        margin: 2rem;
       }
 
       a {
@@ -107,10 +108,6 @@
         border-width: 2px;
       }
 
-      textarea {
-        width: 100%;
-      }
-
       form > * {
         margin-bottom: 1rem;
       }
@@ -125,6 +122,13 @@
       input[type="text"],
       input[type="email"] {
         width: auto;
+        flex-grow: 1;
+        flex-basis: 200px;
+      }
+      textarea {
+        width: auto;
+        flex-grow: 1;
+        flex-basis: 500px;
       }
 
       input[type="number"]::-webkit-inner-spin-button {
@@ -144,13 +148,15 @@
       }
 
       label:has(
-        input[type="number"], input[type="text"], input[type="email"]
+        input[type="number"], input[type="text"], input[type="email"], textarea
       ) {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
 
-        > input {
-          margin-inline-start: 0.5rem;
+        > input[type="number"] {
+          margin-inline-end: -0.5rem;
         }
       }
 
@@ -231,7 +237,7 @@
       }
 
       button::after {
-        content: "Preorder now";
+        content: "Accept and Submit";
         z-index: 6;
         position: absolute;
         inset: 0px;
@@ -297,6 +303,22 @@
         animation: a 12s linear infinite;
         opacity: 1;
       }
+
+      small {
+        color: #ffffff50;
+        margin-left: auto;
+        margin-right: auto;
+        display: table;
+        text-align: center;
+      }
+
+      .disclaimer {
+        margin-left: auto;
+        margin-right: auto;
+        display: table;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
     </style>
   </head>
 
@@ -322,17 +344,29 @@
 
     <div class="container">
       <p>
-        Here you can preorder the brand new
+        Here you can join the group order the upcoming
         <a href="https://oshwlab.com/zebreus/rudelblinken"
-        >Rudelblinken Delta</a>, the best RGB* Catears ever made!
+        >Rudelblinken Delta</a> batch, the best blinking Catears ever made!
+        Delta will contain support for single color and ws2812 RGB led strips,
+        among other features.
       </p>
       <p>
-        We will be ordering the next batch around late february. Production
-        costs are expected to be around 4€ per board. 6€ for the full kit
-        including 3d printed cat-ears and a randomly colored LED strip.
+        We will be ordering the next batch around late february. If you want to
+        add or change something to the design, you should submit them until end
+        of january. By ordering your boards with the batch and not independendly
+        you can help keep the cost of a single board low (Fixed costs for PCB
+        manufacturing + assembly are ~100€).
       </p>
       <p>
-        To keep updated on the current status join the <a
+        For more details on the board and its features view the oshwlab project
+        at
+        <a href="https://oshwlab.com/zebreus/rudelblinken"
+        >oshwlab.com/zebreus/rudelblinken</a>. You can find the rudelblinken
+        software at <a href="https://github.com/zebreus/rudelblinken"
+        >github.com/zebreus/rudelblinken</a>
+      </p>
+      <p>
+        To keep updated on the current status or ask questions join the <a
           href="https://matrix.to/#/#rudelblinken:zebre.us"
         >Rudelblinken matrix room</a>
       </p>
@@ -342,9 +376,9 @@
         <fieldset>
           <legend>Products</legend>
           <fieldset>
-            <legend>PCB Only</legend>
+            <legend>Board Only</legend>
             <p>
-              Only the assembled board, no 3d printed parts or LED strip.
+              Only the Rudelblinken board, no 3d printed parts or LED strip.
             </p>
             <label>
               Quantity: <input
@@ -513,8 +547,18 @@
             ></textarea>
           </label>
         </fieldset>
-
-        <button type="submit">Preorder now</button>
+        <small>The prices do not include VAT in accordance with §19 UStG.</small
+        >
+        <p class="disclaimer">
+          Everything offered here is a kit to build a prototypes and requires
+          some assembly to be usable. They are sold without warranties of any
+          kind, express or implied, including but not limited to the warranties
+          of safety, and fitness for a particular purpose. You should probably
+          never wear a rudelblinken board close to your head, thats a bad idea.
+        </p>
+        <button type="submit">
+          Accept and Submit
+        </button>
       </form>
 
       <script>
@@ -630,11 +674,6 @@
         fullKitPrice.addEventListener("input", checkFullKitPrice);
         checkFullKitPrice();
       </script>
-
-      <p>
-        RGB stands for Really Good Blinkenlights. We also offer them in a
-        variety of colors, but a single rudelblinken is just a single color.
-      </p>
     </div>
   </body>
 </html>

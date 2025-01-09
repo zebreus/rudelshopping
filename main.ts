@@ -280,16 +280,6 @@ Deno.serve(
   async (request) => {
     const pathname = new URL(request.url).pathname;
 
-    if (pathname == "/api/hello") {
-      return new Response(JSON.stringify({ hello: "world" }), {
-        headers: {
-          "content-type": "application/json",
-          "cache-control": "no-cache",
-        },
-        status: 200,
-      });
-    }
-
     if (pathname == "/submit-order") {
       return await processOrderSubmission(request);
     }
