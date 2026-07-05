@@ -1,16 +1,17 @@
-import { serveDir } from "jsr:@std/http/file-server";
-import Stripe from "npm:stripe@^13.0.0";
-import { z } from "npm:zod@^3.24.1";
+import express from "express";
+import Stripe from "stripe";
+import { z } from "zod";
 
-const PORT = parseInt(Deno.env.get("PORT") || "3000");
-const ORIGIN = Deno.env.get("ORIGIN") || "http://[::1]:3000";
-const HOST = Deno.env.get("HOST") || "[::1]";
+const PORT = parseInt(process.env.PORT || "3000");
+const ORIGIN = process.env.ORIGIN || "http://[::1]:3000";
+// Deno accepted the bracketed form "[::1]"; node's listen() wants it bare
+const HOST = (process.env.HOST || "::1").replace(/^\[|\]$/g, "");
 
-if (!Deno.env.get("STRIPE_SECRET_KEY")) {
+if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error("Missing STRIPE_SECRET_KEY environment variable");
 }
 
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-08-16",
 });
 
@@ -141,31 +142,20 @@ const getCashCouponId = async () => {
   return newCoupon.id;
 };
 
-const parseOrder = async (request: Request): Promise<Order> => {
-  const formData = await request.formData();
+const parseOrder = (body: Record<string, unknown>): Order => {
+  // With repeated fields express gives an array; take the first like FormData.get
+  const field = (key: string): string | undefined => {
+    const value = body[key];
+    return (Array.isArray(value) ? value[0] : value)?.toString();
+  };
 
-  const pcbOnlyQuantity = parseInt(
-    formData.get("pcbOnlyQuantity")?.toString() || "0",
-    10,
-  );
-  const partialKitQuantity = parseInt(
-    formData.get("partialKitQuantity")?.toString() || "0",
-    10,
-  );
-  const fullKitQuantity = parseInt(
-    formData.get("fullKitQuantity")?.toString() || "0",
-    10,
-  );
-  const pcbOnlyPrice = parseFloat(
-    formData.get("pcbOnlyPrice")?.toString() || "7",
-  );
-  const partialKitPrice = parseFloat(
-    formData.get("partialKitPrice")?.toString() || "6",
-  );
-  const fullKitPrice = parseFloat(
-    formData.get("fullKitPrice")?.toString() || "9",
-  );
-  const email = formData.get("email");
+  const pcbOnlyQuantity = parseInt(field("pcbOnlyQuantity") || "0", 10);
+  const partialKitQuantity = parseInt(field("partialKitQuantity") || "0", 10);
+  const fullKitQuantity = parseInt(field("fullKitQuantity") || "0", 10);
+  const pcbOnlyPrice = parseFloat(field("pcbOnlyPrice") || "7");
+  const partialKitPrice = parseFloat(field("partialKitPrice") || "6");
+  const fullKitPrice = parseFloat(field("fullKitPrice") || "9");
+  const email = field("email");
 
   const unparsedOrder = {
     pcbOnlyQuantity,
@@ -174,11 +164,11 @@ const parseOrder = async (request: Request): Promise<Order> => {
     pcbOnlyPrice,
     partialKitPrice,
     fullKitPrice,
-    deliveryMethod: formData.get("deliveryMethod"),
-    paymentMethod: formData.get("paymentMethod"),
+    deliveryMethod: field("deliveryMethod"),
+    paymentMethod: field("paymentMethod"),
     email: email,
-    name: formData.get("name"),
-    notes: formData.get("notes") || "",
+    name: field("name"),
+    notes: field("notes") || "",
   };
 
   const order = orderSchema.parse(unparsedOrder);
@@ -288,43 +278,37 @@ const createCheckoutSession = async (order: Order): Promise<string> => {
   }
 };
 
-const processOrderSubmission = async (request: Request): Promise<Response> => {
-  try {
-    const order = await parseOrder(request);
-    const sessionLink = await createCheckoutSession(order);
-    return new Response(sessionLink, {
-      status: 303,
-      headers: { location: sessionLink },
-    });
-  } catch (err) {
-    const parsedError = z
-      .object({
-        message: z.string(),
-      })
-      .safeParse(err);
-    if (!parsedError.success) {
-      return new Response("Something went wrong", { status: 400 });
+const app = express();
+
+app.post(
+  "/submit-order",
+  express.urlencoded({ extended: false }),
+  async (req, res) => {
+    try {
+      const order = parseOrder(req.body);
+      const sessionLink = await createCheckoutSession(order);
+      res.redirect(303, sessionLink);
+    } catch (err) {
+      const parsedError = z
+        .object({
+          message: z.string(),
+        })
+        .safeParse(err);
+      if (!parsedError.success) {
+        res.status(400).send("Something went wrong");
+        return;
+      }
+      res.status(400).send(parsedError.data.message);
     }
-    return new Response(parsedError.data.message, { status: 400 });
-  }
-};
-
-Deno.serve(
-  {
-    port: PORT,
-    hostname: HOST,
-  },
-  async (request) => {
-    const pathname = new URL(request.url).pathname;
-
-    if (pathname == "/submit-order") {
-      return await processOrderSubmission(request);
-    }
-
-    return await serveDir(request, {
-      fsRoot: "./",
-      urlRoot: "",
-      showIndex: true,
-    });
   },
 );
+
+app.use("/node_modules", (_req, res) => {
+  res.status(404).end();
+});
+app.use(express.static(import.meta.dirname));
+
+app.listen(PORT, HOST, () => {
+  const displayHost = HOST.includes(":") ? `[${HOST}]` : HOST;
+  console.log(`Listening on http://${displayHost}:${PORT}/`);
+});

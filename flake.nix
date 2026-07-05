@@ -25,12 +25,8 @@
 
         devShell = pkgs.mkShell {
           buildInputs = [
-            pkgs.deno
+            pkgs.nodejs_24
           ];
-          shellHook = ''
-            deno install -A jsr:@deno/deployctl --global 2> /dev/null || true
-            export PATH="$HOME/.deno/bin:$PATH"
-          '';
         };
 
         checks.opensPort = pkgs.nixosTest {

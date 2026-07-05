@@ -1,29 +1,34 @@
 {
-  stdenv,
-  deno,
+  buildNpmPackage,
+  makeWrapper,
+  nodejs_24,
   lib,
   ...
 }:
-stdenv.mkDerivation {
+buildNpmPackage {
   pname = "rudelshopping";
   version = "0.0.1";
 
   src = ./.;
 
-  nativeBuildInputs = [
-    deno
-  ];
+  nodejs = nodejs_24;
+
+  nativeBuildInputs = [ makeWrapper ];
+
+  npmDepsHash = "sha256-R2TYoO/GpkDDlTgTjMSgPihs/xYMyHTi4fzIS9iwyqg=";
+
+  dontNpmBuild = true;
 
   installPhase = ''
-    mkdir -p $out/bin
+    runHook preInstall
 
-    cat <<EOF > $out/bin/rudelshopping
-    #!/usr/bin/env bash
-    cd $src
-    ${lib.getExe deno} run --allow-net --allow-read="$src" main.ts
-    EOF
+    mkdir -p $out/lib/rudelshopping $out/bin
+    cp -r . $out/lib/rudelshopping
 
-    chmod a+rwx $out/bin/rudelshopping
+    makeWrapper ${lib.getExe nodejs_24} $out/bin/rudelshopping \
+      --add-flags "$out/lib/rudelshopping/main.ts"
+
+    runHook postInstall
   '';
 
   meta = {
