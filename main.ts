@@ -2,7 +2,6 @@ import express from "express";
 import { readFileSync, existsSync } from "fs";
 import Stripe from "stripe";
 import { z } from "zod";
-
 const PORT = parseInt(process.env.PORT || "3000");
 const ORIGIN = process.env.ORIGIN || "http://[::1]:3000";
 // Deno accepted the bracketed form "[::1]"; node's listen() wants it bare
@@ -323,6 +322,35 @@ app.post(
 app.use("/node_modules", (_req, res) => {
   res.status(404).end();
 });
+
+// Serve the HTML pages with the subset font inlined as a base64 data URI so the
+// browser gets the font in the same response as the HTML (no extra round-trip,
+// no flash of unstyled text). The source files keep a plain file:// reference
+// for editability.
+const fontB64 = readFileSync(
+  `${import.meta.dirname}/fonts/MonaspaceKrypton-Regular.subset.woff2`,
+).toString("base64");
+const inlineFont = (html: string) =>
+  html.replace(
+    "url(./fonts/MonaspaceKrypton-Regular.subset.woff2)",
+    `url(data:font/woff2;base64,${fontB64}) format("woff2")`,
+  );
+const htmlPages = Object.fromEntries(
+  ["index.html", "success.html", "failure.html"].map((name) => [
+    name,
+    inlineFont(readFileSync(`${import.meta.dirname}/${name}`, "utf8")),
+  ]),
+);
+
+for (const name of Object.keys(htmlPages)) {
+  app.get(`/${name}`, (_req, res) => {
+    res.type("html").send(htmlPages[name]);
+  });
+}
+app.get("/", (_req, res) => {
+  res.type("html").send(htmlPages["index.html"]);
+});
+
 app.use(express.static(import.meta.dirname));
 
 app.listen(PORT, HOST, () => {
