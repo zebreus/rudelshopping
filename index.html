@@ -312,6 +312,15 @@
         text-align: center;
       }
 
+      fieldset.unavailable {
+        opacity: 0.5;
+      }
+
+      fieldset.unavailable legend,
+      fieldset.unavailable p:first-of-type {
+        text-decoration: line-through;
+      }
+
       .disclaimer {
         margin-left: auto;
         margin-right: auto;
@@ -344,25 +353,15 @@
 
     <div class="container">
       <p>
-        Most of the boards we ordered are broken because of design flaws and
-        noone of us has time to properly debug it. For that reason preorders
-        are closed for now and we will refund everyone who ordered in the
-        coming weeks.
-
-        If anyone is interested in some broken boards please message zebreus.
-      </p>
-      
-      <p>
-        Here you can preorder a
+        Here you can order a
         <a href="https://oshwlab.com/zebreus/rudelblinken"
-        >rudelblinken Delta board</a> in the next batch! Delta will contain
-        support for single color and ws2812 RGB led strips, among other
-        features.
+        >rudelblinken Eta board</a>! Eta supports single color and ws2812 RGB
+        led strips, among other features.
       </p>
       <p>
-        We will be ordering the next batch around late february. If you want to
-        make some changes to the design, you should submit them until end of
-        january. By ordering your boards as part of the batch and not
+        We are selling Eta boards from stock. The next batch will be ordered
+        once we run out of boards or when the ESP32-C61 is generally
+        available. By ordering your boards as part of the batch and not
         independendly you can help keep the cost per board low (~4€), because
         the fixed costs for PCB manufacturing and assembly are ~100€.
       </p>
@@ -413,11 +412,46 @@
           </fieldset>
 
           <fieldset>
+            <legend>Partial kit</legend>
+            <p>
+              The Rudelblinken board and a randomly colored LED strip, but no
+              3d printed cat-ear. If you want a specific color, please write
+              it in the notes.
+            </p>
+            <label>
+              Quantity: <input
+                type="number"
+                id="partialKitQuantity"
+                name="partialKitQuantity"
+                min="0"
+                step="1"
+                max="999"
+                placeholder="0"
+              />
+            </label>
+
+            <label>Price:
+              <input
+                type="number"
+                id="partialKitPrice"
+                name="partialKitPrice"
+                min="4"
+                step="0.01"
+                placeholder="6"
+                value="6"
+              />€</label>
+          </fieldset>
+
+          <fieldset class="unavailable">
             <legend>Full kit</legend>
             <p>
               The full kit including 3d printed cat-ears and a randomly colored
               LED strip. If you want a specific color, please write it in the
               notes.
+            </p>
+            <p>
+              Full kits are currently not available. Get the partial kit and
+              print your own cat-ears instead.
             </p>
             <label>
               Quantity: <input
@@ -428,6 +462,7 @@
                 step="1"
                 max="999"
                 placeholder="0"
+                disabled
               />
             </label>
 
@@ -440,6 +475,7 @@
                 step="0.01"
                 placeholder="9"
                 value="9"
+                disabled
               />€</label>
           </fieldset>
         </fieldset>
@@ -565,8 +601,8 @@
           safety, or fitness for a particular purpose. You should probably never
           wear a rudelblinken board close to your head, thats a bad idea.
         </p>
-        <button disabled type="submit">
-          Sorry currently not available.
+        <button type="submit">
+          Accept and Submit
         </button>
       </form>
 
@@ -579,11 +615,11 @@
         const pcbOnlyPrice = document.getElementById(
           "pcbOnlyPrice",
         );
-        const fullKitQuantity = document.getElementById(
-          "fullKitQuantity",
+        const partialKitQuantity = document.getElementById(
+          "partialKitQuantity",
         );
-        const fullKitPrice = document.getElementById(
-          "fullKitPrice",
+        const partialKitPrice = document.getElementById(
+          "partialKitPrice",
         );
         const notes = document.getElementById("notes");
         const email = document.getElementById("email");
@@ -613,22 +649,22 @@
         // Assert that more than 1 item is ordered
         const checkQuantity = () => {
           const pcbOnly = pcbOnlyQuantity.value || 0;
-          const fullKit = fullKitQuantity.value || 0;
-          const orderQuantity = parseInt(pcbOnly) + parseInt(fullKit);
+          const partialKit = partialKitQuantity.value || 0;
+          const orderQuantity = parseInt(pcbOnly) + parseInt(partialKit);
           if (orderQuantity <= 0) {
             pcbOnlyQuantity.setCustomValidity(
               "You need to order at least one item",
             );
-            fullKitQuantity.setCustomValidity(
+            partialKitQuantity.setCustomValidity(
               "You need to order at least one item",
             );
           } else {
             pcbOnlyQuantity.setCustomValidity("");
-            fullKitQuantity.setCustomValidity("");
+            partialKitQuantity.setCustomValidity("");
           }
         };
         pcbOnlyQuantity.addEventListener("input", checkQuantity);
-        fullKitQuantity.addEventListener("input", checkQuantity);
+        partialKitQuantity.addEventListener("input", checkQuantity);
         checkQuantity();
 
         // Assert that cash is only selected for pickup
@@ -656,10 +692,10 @@
         const checkPcbOnlyPrice = (event) => {
           const pcbOnlyQuant = pcbOnlyQuantity.value || 0;
           if (
-            parseFloat(pcbOnlyPrice.value) < 4 && pcbOnlyQuant > 0
+            parseFloat(pcbOnlyPrice.value) < 3 && pcbOnlyQuant > 0
           ) {
             pcbOnlyPrice.setCustomValidity(
-              "Please enter a price that is higher than the production cost (4€). If that doesn't work for you, write me an email.",
+              "Please enter a price that is higher than the production cost (3€). If that doesn't work for you, write me an email.",
             );
           } else {
             pcbOnlyPrice.setCustomValidity("");
@@ -668,20 +704,20 @@
         pcbOnlyPrice.addEventListener("input", checkPcbOnlyPrice);
         checkPcbOnlyPrice();
 
-        const checkFullKitPrice = (event) => {
-          const fullKitQuant = fullKitQuantity.value || 0;
+        const checkPartialKitPrice = (event) => {
+          const partialKitQuant = partialKitQuantity.value || 0;
           if (
-            parseFloat(fullKitPrice.value) < 6 && fullKitQuant > 0
+            parseFloat(partialKitPrice.value) < 4 && partialKitQuant > 0
           ) {
-            fullKitPrice.setCustomValidity(
+            partialKitPrice.setCustomValidity(
               "Please enter a price that is higher than the production cost (4€). If that doesn't work for you, write me an email.",
             );
           } else {
-            fullKitPrice.setCustomValidity("");
+            partialKitPrice.setCustomValidity("");
           }
         };
-        fullKitPrice.addEventListener("input", checkFullKitPrice);
-        checkFullKitPrice();
+        partialKitPrice.addEventListener("input", checkPartialKitPrice);
+        checkPartialKitPrice();
       </script>
     </div>
   </body>

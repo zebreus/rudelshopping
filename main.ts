@@ -19,8 +19,10 @@ const paymentMethodSchema = z.enum(["cash", "stripe"]);
 const emailSchema = z.string().email();
 const orderSchema = z.object({
   pcbOnlyQuantity: z.number().int().default(0),
+  partialKitQuantity: z.number().int().default(0),
   fullKitQuantity: z.number().int().default(0),
   pcbOnlyPrice: z.number().positive().default(7),
+  partialKitPrice: z.number().positive().default(6),
   fullKitPrice: z.number().positive().default(9),
   deliveryMethod: deliveryMethodSchema.default("shipping"),
   paymentMethod: paymentMethodSchema.default("stripe"),
@@ -35,7 +37,7 @@ type PaymentMethod = z.infer<typeof paymentMethodSchema>;
 type Order = z.infer<typeof orderSchema>;
 
 const getShippingRate = (
-  deliveryMethod: DeliveryMethod
+  deliveryMethod: DeliveryMethod,
 ): Stripe.Checkout.SessionCreateParams.ShippingOption => {
   // const oneDay = 24 * 60 * 60 * 1000;
   // const daysUntilBatchA = Math.round(
@@ -57,7 +59,7 @@ const getShippingRate = (
   > = {
     shipping: {
       shipping_rate_data: {
-        display_name: "Shipping in March",
+        display_name: "Shipping (Sometime)",
         fixed_amount: {
           amount: 420,
           currency: "eur",
@@ -144,24 +146,33 @@ const parseOrder = async (request: Request): Promise<Order> => {
 
   const pcbOnlyQuantity = parseInt(
     formData.get("pcbOnlyQuantity")?.toString() || "0",
-    10
+    10,
+  );
+  const partialKitQuantity = parseInt(
+    formData.get("partialKitQuantity")?.toString() || "0",
+    10,
   );
   const fullKitQuantity = parseInt(
     formData.get("fullKitQuantity")?.toString() || "0",
-    10
+    10,
   );
   const pcbOnlyPrice = parseFloat(
-    formData.get("pcbOnlyPrice")?.toString() || "7"
+    formData.get("pcbOnlyPrice")?.toString() || "7",
+  );
+  const partialKitPrice = parseFloat(
+    formData.get("partialKitPrice")?.toString() || "6",
   );
   const fullKitPrice = parseFloat(
-    formData.get("fullKitPrice")?.toString() || "9"
+    formData.get("fullKitPrice")?.toString() || "9",
   );
   const email = formData.get("email");
 
   const unparsedOrder = {
     pcbOnlyQuantity,
+    partialKitQuantity,
     fullKitQuantity,
     pcbOnlyPrice,
+    partialKitPrice,
     fullKitPrice,
     deliveryMethod: formData.get("deliveryMethod"),
     paymentMethod: formData.get("paymentMethod"),
@@ -172,15 +183,21 @@ const parseOrder = async (request: Request): Promise<Order> => {
 
   const order = orderSchema.parse(unparsedOrder);
 
-  if (order.pcbOnlyQuantity === 0 && order.fullKitQuantity === 0) {
+  if (order.fullKitQuantity > 0) {
     throw new Error(
-      "You need to order at least one item. I mean it wouldn't be a preorder otherwise, right?"
+      "Full kits are currently not available. Get the partial kit and print your own cat-ears instead.",
+    );
+  }
+
+  if (order.pcbOnlyQuantity === 0 && order.partialKitQuantity === 0) {
+    throw new Error(
+      "You need to order at least one item. I mean it wouldn't be a preorder otherwise, right?",
     );
   }
 
   if (order.paymentMethod === "cash" && order.deliveryMethod === "shipping") {
     throw new Error(
-      "You can only pay in cash for pickup orders. Maybe write me an email, we can figure something out."
+      "You can only pay in cash for pickup orders. Maybe write me an email, we can figure something out.",
     );
   }
 
@@ -203,11 +220,11 @@ const createCheckoutSession = async (order: Order): Promise<string> => {
       price_data: {
         currency: "eur",
         product_data: {
-          name: "Rudelblinken Kit",
+          name: "Rudelblinken Partial Kit",
         },
-        unit_amount: Math.round(order.fullKitPrice * 100), // Stripe expects amounts in cents
+        unit_amount: Math.round(order.partialKitPrice * 100), // Stripe expects amounts in cents
       },
-      quantity: order.fullKitQuantity,
+      quantity: order.partialKitQuantity,
     },
   ].filter((item) => item.quantity > 0);
 
@@ -309,5 +326,5 @@ Deno.serve(
       urlRoot: "",
       showIndex: true,
     });
-  }
+  },
 );
