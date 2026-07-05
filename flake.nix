@@ -18,26 +18,30 @@
         pkgs = import nixpkgs { inherit system; };
       in
       rec {
-        name = "rudelshopping";
-
         packages.rudelshopping = pkgs.callPackage ./default.nix { };
         packages.default = packages.rudelshopping;
 
-        devShell = pkgs.mkShell {
+        devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.nodejs_24
           ];
         };
 
-        checks.opensPort = pkgs.nixosTest {
+        checks.opensPort = pkgs.testers.nixosTest {
           name = "rudelshopping-opens-port";
           nodes.machine =
             { config, pkgs, ... }:
             {
-              imports = [
-                nixosModules.rudelshopping
-                { services.rudelshopping.enable = true; }
-              ];
+              imports = [ nixosModules.rudelshopping ];
+              services.rudelshopping = {
+                enable = true;
+                # A dummy key: the server only talks to Stripe on /submit-order,
+                # so binding the port succeeds without a real one. Loaded as a
+                # systemd credential (raw value, no KEY= prefix).
+                stripeKeyFile = pkgs.writeText "rudelshopping-stripe" ''
+                  sk_test_dummy
+                '';
+              };
             };
           testScript = ''
             machine.wait_for_unit("rudelshopping.service")

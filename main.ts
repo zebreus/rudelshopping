@@ -1,4 +1,5 @@
 import express from "express";
+import { readFileSync, existsSync } from "fs";
 import Stripe from "stripe";
 import { z } from "zod";
 
@@ -7,11 +8,27 @@ const ORIGIN = process.env.ORIGIN || "http://[::1]:3000";
 // Deno accepted the bracketed form "[::1]"; node's listen() wants it bare
 const HOST = (process.env.HOST || "::1").replace(/^\[|\]$/g, "");
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Missing STRIPE_SECRET_KEY environment variable");
+function loadStripeKey(): string {
+  // Under systemd the key lives in a credential file mounted at
+  // $CREDENTIALS_DIRECTORY/stripe (LoadCredential=stripe:<path>).
+  const credDir = process.env.CREDENTIALS_DIRECTORY;
+  if (credDir) {
+    const credPath = `${credDir}/stripe`;
+    if (!existsSync(credPath)) {
+      throw new Error(`Missing credential file: ${credPath}`);
+    }
+    return readFileSync(credPath, "utf8").trim();
+  }
+  // Local dev fallback: plain env var.
+  if (process.env.STRIPE_SECRET_KEY) {
+    return process.env.STRIPE_SECRET_KEY;
+  }
+  throw new Error(
+    "Missing Stripe key: set CREDENTIALS_DIRECTORY (systemd) or STRIPE_SECRET_KEY (env)",
+  );
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(loadStripeKey(), {
   apiVersion: "2023-08-16",
 });
 
